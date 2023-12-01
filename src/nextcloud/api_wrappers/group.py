@@ -15,11 +15,7 @@ class Group(WithRequester):
         :param offset: int, optional offset value
         :return:
         """
-        params = {
-            'search': search,
-            'limit': limit,
-            'offset': offset
-        }
+        params = {"search": search, "limit": limit, "offset": offset}
         return self.requester.get(params=params)
 
     def add_group(self, gid):

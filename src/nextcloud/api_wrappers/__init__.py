@@ -11,7 +11,17 @@ from .user import User
 from .user_ldap import UserLDAP
 from .webdav import WebDAV
 
-OCS_API_CLASSES = [Activity, Apps, Capabilities, FederatedCloudShare, Group, GroupFolders,
-                   Notifications, Share, User, UserLDAP]
+OCS_API_CLASSES = [
+    Activity,
+    Apps,
+    Capabilities,
+    FederatedCloudShare,
+    Group,
+    GroupFolders,
+    Notifications,
+    Share,
+    User,
+    UserLDAP,
+]
 
 WEBDAV_CLASS = WebDAV

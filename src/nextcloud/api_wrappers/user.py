@@ -14,7 +14,7 @@ class User(WithRequester):
         :param passwd: str, password of new user
         :return:
         """
-        msg = {'userid': uid, 'password': passwd}
+        msg = {"userid": uid, "password": passwd}
         return self.requester.post("", msg)
 
     def get_users(self, search=None, limit=None, offset=None):
@@ -26,11 +26,7 @@ class User(WithRequester):
         :param offset: int, optional offset value
         :return:
         """
-        params = {
-            'search': search,
-            'limit': limit,
-            'offset': offset
-        }
+        params = {"search": search, "limit": limit, "offset": offset}
         return self.requester.get(params=params)
 
     def get_user(self, uid):
@@ -55,12 +51,19 @@ class User(WithRequester):
         :return:
         """
         what_to_key_map = dict(
-            email="email", quota="quota", phone="phone", address="address", website="website",
-            twitter="twitter", displayname="displayname", password="password",
+            email="email",
+            quota="quota",
+            phone="phone",
+            address="address",
+            website="website",
+            twitter="twitter",
+            displayname="displayname",
+            password="password",
         )
-        assert what in what_to_key_map, (
-            "You have chosen to edit user's '{what}', but you can choose only from: {choices}"
-            .format(what=what, choices=", ".join(what_to_key_map.keys()))
+        assert (
+            what in what_to_key_map
+        ), "You have chosen to edit user's '{what}', but you can choose only from: {choices}".format(
+            what=what, choices=", ".join(what_to_key_map.keys())
         )
 
         url = "{uid}".format(uid=uid)
@@ -106,7 +109,7 @@ class User(WithRequester):
         :return:
         """
         url = "{uid}/groups".format(uid=uid)
-        msg = {'groupid': gid}
+        msg = {"groupid": gid}
         return self.requester.post(url, msg)
 
     def remove_from_group(self, uid, gid):
@@ -118,7 +121,7 @@ class User(WithRequester):
         :return:
         """
         url = "{uid}/groups".format(uid=uid)
-        msg = {'groupid': gid}
+        msg = {"groupid": gid}
         return self.requester.delete(url, msg)
 
     def create_subadmin(self, uid, gid):
@@ -130,7 +133,7 @@ class User(WithRequester):
         :return:
         """
         url = "{uid}/subadmins".format(uid=uid)
-        msg = {'groupid': gid}
+        msg = {"groupid": gid}
         return self.requester.post(url, msg)
 
     def remove_subadmin(self, uid, gid):
@@ -142,7 +145,7 @@ class User(WithRequester):
         :return:
         """
         url = "{uid}/subadmins".format(uid=uid)
-        msg = {'groupid': gid}
+        msg = {"groupid": gid}
         return self.requester.delete(url, msg)
 
     def get_subadmin_groups(self, uid):

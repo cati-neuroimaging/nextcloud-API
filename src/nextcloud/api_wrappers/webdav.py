@@ -8,12 +8,11 @@ from nextcloud.base import WithRequester
 
 
 class WebDAV(WithRequester):
-
     API_URL = "/remote.php/dav/files"
 
     def __init__(self, *args, **kwargs):
         super(WebDAV, self).__init__(*args)
-        self.json_output = kwargs.get('json_output')
+        self.json_output = kwargs.get("json_output")
 
     def list_folders(self, uid, path=None, depth=1, all_properties=False):
         """
@@ -53,16 +52,20 @@ class WebDAV(WithRequester):
         additional_url = uid
         if path:
             additional_url = "{}/{}".format(additional_url, path)
-        resp = self.requester.propfind(additional_url=additional_url,
-                                       headers={"Depth": str(depth)},
-                                       data=data)
+        resp = self.requester.propfind(
+            additional_url=additional_url, headers={"Depth": str(depth)}, data=data
+        )
         if not resp.is_ok:
             resp.data = None
             return resp
         response_data = resp.data
         response_xml_data = ET.fromstring(response_data)
         files_data = [File(single_file) for single_file in response_xml_data]
-        resp.data = files_data if not self.json_output else [each.as_dict() for each in files_data]
+        resp.data = (
+            files_data
+            if not self.json_output
+            else [each.as_dict() for each in files_data]
+        )
         return resp
 
     def download_file(self, uid, path):
@@ -81,19 +84,21 @@ class WebDAV(WithRequester):
             None
         """
         additional_url = "/".join([uid, path])
-        filename = path.split('/')[-1] if '/' in path else path
+        filename = path.split("/")[-1] if "/" in path else path
         file_data = self.list_folders(uid=uid, path=path, depth=0)
         if not file_data:
             raise ValueError("Given path doesn't exist")
-        file_resource_type = (file_data.data[0].get('resource_type')
-                              if self.json_output
-                              else file_data.data[0].resource_type)
+        file_resource_type = (
+            file_data.data[0].get("resource_type")
+            if self.json_output
+            else file_data.data[0].resource_type
+        )
         if file_resource_type == File.COLLECTION_RESOURCE_TYPE:
             raise ValueError("This is a collection, please specify file path")
-        if filename in os.listdir('./'):
+        if filename in os.listdir("./"):
             raise ValueError("File with such name already exists in this directory")
         res = self.requester.download(additional_url)
-        with open(filename, 'wb') as f:
+        with open(filename, "wb") as f:
             f.write(res.data)
 
     def upload_file(self, uid, local_filepath, remote_filepath):
@@ -105,7 +110,7 @@ class WebDAV(WithRequester):
             remote_filepath (str): path where to upload file on Nextcloud storage
         Returns:
         """
-        with open(local_filepath, 'rb') as f:
+        with open(local_filepath, "rb") as f:
             file_content = f.read()
         additional_url = "/".join([uid, remote_filepath])
         return self.requester.put(additional_url, data=file_content)
@@ -118,7 +123,9 @@ class WebDAV(WithRequester):
             folder_path (str): folder path
         Returns:
         """
-        return self.requester.make_collection(additional_url="/".join([uid, folder_path]))
+        return self.requester.make_collection(
+            additional_url="/".join([uid, folder_path])
+        )
 
     def delete_path(self, uid, path):
         """
@@ -143,8 +150,9 @@ class WebDAV(WithRequester):
         """
         path_url = "/".join([uid, path])
         destination_path_url = "/".join([uid, destination_path])
-        return self.requester.move(url=path_url,
-                                   destination=destination_path_url, overwrite=overwrite)
+        return self.requester.move(
+            url=path_url, destination=destination_path_url, overwrite=overwrite
+        )
 
     def copy_path(self, uid, path, destination_path, overwrite=False):
         """
@@ -158,8 +166,9 @@ class WebDAV(WithRequester):
         """
         path_url = "/".join([uid, path])
         destination_path_url = "/".join([uid, destination_path])
-        return self.requester.copy(url=path_url,
-                                   destination=destination_path_url, overwrite=overwrite)
+        return self.requester.copy(
+            url=path_url, destination=destination_path_url, overwrite=overwrite
+        )
 
     def set_favorites(self, uid, path):
         """
@@ -205,13 +214,16 @@ class WebDAV(WithRequester):
             return res
         response_xml_data = ET.fromstring(res.data)
         files_data = [File(single_file) for single_file in response_xml_data]
-        res.data = files_data if not self.json_output else [each.as_dict() for each in files_data]
+        res.data = (
+            files_data
+            if not self.json_output
+            else [each.as_dict() for each in files_data]
+        )
         return res
 
 
 class File(object):
-
-    SUCCESS_STATUS = 'HTTP/1.1 200 OK'
+    SUCCESS_STATUS = "HTTP/1.1 200 OK"
 
     # key is NextCloud property, value is python variable name
     FILE_PROPERTIES = {
@@ -240,20 +252,23 @@ class File(object):
     xml_namespaces_map = {
         "d": "DAV:",
         "oc": "http://owncloud.org/ns",
-        "nc": "http://nextcloud.org/ns"
+        "nc": "http://nextcloud.org/ns",
     }
-    COLLECTION_RESOURCE_TYPE = 'collection'
+    COLLECTION_RESOURCE_TYPE = "collection"
 
     def __init__(self, xml_data):
-        self.href = xml_data.find('d:href', self.xml_namespaces_map).text
-        for propstat in xml_data.iter('{DAV:}propstat'):
-            if propstat.find('d:status', self.xml_namespaces_map).text != self.SUCCESS_STATUS:
+        self.href = xml_data.find("d:href", self.xml_namespaces_map).text
+        for propstat in xml_data.iter("{DAV:}propstat"):
+            if (
+                propstat.find("d:status", self.xml_namespaces_map).text
+                != self.SUCCESS_STATUS
+            ):
                 continue
-            for file_property in propstat.find('d:prop', self.xml_namespaces_map):
+            for file_property in propstat.find("d:prop", self.xml_namespaces_map):
                 file_property_name = re.sub("{.*}", "", file_property.tag)
                 if file_property_name not in self.FILE_PROPERTIES:
                     continue
-                if file_property_name == 'resourcetype':
+                if file_property_name == "resourcetype":
                     value = self._extract_resource_type(file_property)
                 else:
                     value = file_property.text
@@ -266,9 +281,11 @@ class File(object):
         return None
 
     def as_dict(self):
-        return {key: value
-                for key, value in self.__dict__.items()
-                if key in self.FILE_PROPERTIES.values()}
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if key in self.FILE_PROPERTIES.values()
+        }
 
 
 class WebDAVStatusCodes(object):

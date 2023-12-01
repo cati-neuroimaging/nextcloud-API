@@ -26,16 +26,19 @@ class Share(WithRequester):
             bool: True if parameters make sense together, False otherwise
         """
         if (
-            path is None or not isinstance(share_type, int) or (
-                share_with is None and
-                share_type in [ShareType.GROUP, ShareType.USER, ShareType.FEDERATED_CLOUD_SHARE]
+            path is None
+            or not isinstance(share_type, int)
+            or (
+                share_with is None
+                and share_type
+                in [ShareType.GROUP, ShareType.USER, ShareType.FEDERATED_CLOUD_SHARE]
             )
         ):
             return False
         return True
 
     def get_shares(self):
-        """ Get all shares from the user """
+        """Get all shares from the user"""
         return self.requester.get(self.get_local_url())
 
     def get_shares_from_path(self, path, reshares=None, subfiles=None):
@@ -73,8 +76,14 @@ class Share(WithRequester):
         return self.requester.get(self.get_local_url(sid))
 
     def create_share(
-            self, path, share_type, share_with=None, public_upload=None,
-            password=None, permissions=None):
+        self,
+        path,
+        share_type,
+        share_with=None,
+        public_upload=None,
+        password=None,
+        permissions=None,
+    ):
         """
         Share a file/folder with a user/group or as public link
 
@@ -99,7 +108,11 @@ class Share(WithRequester):
             public_upload = "true"
 
         data = {"path": path, "shareType": share_type}
-        if share_type in [ShareType.GROUP, ShareType.USER, ShareType.FEDERATED_CLOUD_SHARE]:
+        if share_type in [
+            ShareType.GROUP,
+            ShareType.USER,
+            ShareType.FEDERATED_CLOUD_SHARE,
+        ]:
             data["shareWith"] = share_with
         if public_upload:
             data["publicUpload"] = public_upload
@@ -121,8 +134,9 @@ class Share(WithRequester):
         """
         return self.requester.delete(self.get_local_url(sid))
 
-    def update_share(self, sid,
-                     permissions=None, password=None, public_upload=None, expire_date=""):
+    def update_share(
+        self, sid, permissions=None, password=None, public_upload=None, expire_date=""
+    ):
         """
         Update a given share, only one value can be updated per request
 
@@ -137,9 +151,7 @@ class Share(WithRequester):
 
         """
         params = dict(
-            permissions=permissions,
-            password=password,
-            expireDate=expire_date
+            permissions=permissions, password=password, expireDate=expire_date
         )
         if public_upload:
             params["publicUpload"] = "true"
@@ -149,7 +161,9 @@ class Share(WithRequester):
         # check if only one param specified
         specified_params_count = sum([int(bool(each)) for each in params.values()])
         if specified_params_count > 1:
-            raise ValueError("Only one parameter for update can be specified per request")
+            raise ValueError(
+                "Only one parameter for update can be specified per request"
+            )
 
         url = self.get_local_url(sid)
         return self.requester.put(url, data=params)
