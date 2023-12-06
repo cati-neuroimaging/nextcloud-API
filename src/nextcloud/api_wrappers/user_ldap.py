@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from nextcloud.base import WithRequester
+from ..base import WithRequester
 
 
 class UserLDAP(WithRequester):
@@ -64,7 +64,7 @@ class UserLDAP(WithRequester):
     ]
 
     def create_ldap_config(self):
-        """ Create a new and empty LDAP configuration """
+        """Create a new and empty LDAP configuration"""
         return self.requester.post()
 
     def get_ldap_config(self, config_id, show_password=None):
@@ -95,7 +95,9 @@ class UserLDAP(WithRequester):
         Returns:
 
         """
-        prepared_data = {'configData[{}]'.format(key): value for key, value in data.items()}
+        prepared_data = {
+            "configData[{}]".format(key): value for key, value in data.items()
+        }
         return self.requester.put(config_id, data=prepared_data)
 
     def delete_ldap_config(self, config_id):
@@ -112,8 +114,8 @@ class UserLDAP(WithRequester):
 
 
 for ldap_key in UserLDAP.CONFIG_KEYS:
-    key_name = re.sub('ldap', '', ldap_key)
-    key_name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', key_name).lower()
+    key_name = re.sub("ldap", "", ldap_key)
+    key_name = re.sub("([a-z0-9])([A-Z])", r"\1_\2", key_name).lower()
 
     # create and add getter method
     getter_name = "get_ldap_{}".format(key_name)
@@ -123,6 +125,7 @@ for ldap_key in UserLDAP.CONFIG_KEYS:
             res = self.get_ldap_config(config_id)
             data = res.data
             return data[param]
+
         getter.__name__ = getter_name
         return getter
 
@@ -135,6 +138,7 @@ for ldap_key in UserLDAP.CONFIG_KEYS:
         def setter(self, config_id, value):
             res = self.edit_ldap_config(config_id, data={param: value})
             return res
+
         setter.__name__ = setter_name
         return setter
 

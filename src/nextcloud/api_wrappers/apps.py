@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from nextcloud.base import WithRequester
+from ..base import WithRequester
 
 
 class Apps(WithRequester):
@@ -13,9 +13,7 @@ class Apps(WithRequester):
         :param filter: str, optional "enabled" or "disabled"
         :return:
         """
-        params = {
-            "filter": filter
-        }
+        params = {"filter": filter}
         return self.requester.get(params=params)
 
     def get_app(self, app_id):

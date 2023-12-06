@@ -3,7 +3,6 @@ import enum
 
 
 class WithRequester(object):
-
     API_URL = NotImplementedError
 
     def __init__(self, requester):
@@ -11,10 +10,10 @@ class WithRequester(object):
 
     @property
     def requester(self):
-        """ Get requester instance """
+        """Get requester instance"""
         # dynamically set API_URL for requester
         self._requester.API_URL = self.API_URL
-        self._requester.SUCCESS_CODE = getattr(self, 'SUCCESS_CODE', None)
+        self._requester.SUCCESS_CODE = getattr(self, "SUCCESS_CODE", None)
         return self._requester
 
 
@@ -31,10 +30,12 @@ class ShareType(enum.IntEnum):
     GROUP = 1
     PUBLIC_LINK = 3
     FEDERATED_CLOUD_SHARE = 6
+    CIRCLE = 7
 
 
 class Permission(enum.IntEnum):
-    """ Permission for Share have to be sum of selected permissions """
+    """Permission for Share have to be sum of selected permissions"""
+
     READ = 1
     UPDATE = 2
     CREATE = 4
