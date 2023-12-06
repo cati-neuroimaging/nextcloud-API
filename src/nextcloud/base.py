@@ -30,6 +30,7 @@ class ShareType(enum.IntEnum):
     GROUP = 1
     PUBLIC_LINK = 3
     FEDERATED_CLOUD_SHARE = 6
+    CIRCLE = 7
 
 
 class Permission(enum.IntEnum):

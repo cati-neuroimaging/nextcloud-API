@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
 import os
-
 import xml.etree.ElementTree as ET
-
-from nextcloud.base import WithRequester
+from ..base import WithRequester
 
 
 class WebDAV(WithRequester):

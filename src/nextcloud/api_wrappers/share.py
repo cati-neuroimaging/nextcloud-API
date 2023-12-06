@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from nextcloud.base import WithRequester, ShareType
+from ..base import WithRequester, ShareType
 
 
 class Share(WithRequester):
@@ -31,7 +31,12 @@ class Share(WithRequester):
             or (
                 share_with is None
                 and share_type
-                in [ShareType.GROUP, ShareType.USER, ShareType.FEDERATED_CLOUD_SHARE]
+                in [
+                    ShareType.GROUP,
+                    ShareType.USER,
+                    ShareType.FEDERATED_CLOUD_SHARE,
+                    ShareType.CIRCLE,
+                ]
             )
         ):
             return False
@@ -101,7 +106,7 @@ class Share(WithRequester):
 
         """
         if not self.validate_share_parameters(path, share_type, share_with):
-            return False
+            raise ValueError("Unexpected input parameters.")
 
         url = self.get_local_url()
         if public_upload:
@@ -150,6 +155,8 @@ class Share(WithRequester):
         Returns:
 
         """
+        if permissions is not None:
+            permissions = int(permissions)
         params = dict(
             permissions=permissions, password=password, expireDate=expire_date
         )

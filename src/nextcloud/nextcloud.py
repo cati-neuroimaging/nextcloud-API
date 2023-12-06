@@ -4,11 +4,13 @@ from .api_wrappers import OCS_API_CLASSES, WEBDAV_CLASS
 
 
 class NextCloud(object):
-    def __init__(self, endpoint, user, password, json_output=True):
+    """NextCloud API class: allows OCS and WebDav requests."""
+
+    def __init__(self, endpoint, auth, json_output=True, verify=True):
         self.query_components = []
 
-        ocs_requester = OCSRequester(endpoint, user, password, json_output)
-        webdav_requester = WebDAVRequester(endpoint, user, password)
+        ocs_requester = OCSRequester(endpoint, auth, json_output, verify)
+        webdav_requester = WebDAVRequester(endpoint, auth, verify=verify)
 
         self.functionality_classes = [
             api_class(ocs_requester) for api_class in OCS_API_CLASSES

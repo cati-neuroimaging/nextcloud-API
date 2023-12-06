@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from json import JSONDecodeError
-
 from .api_wrappers.webdav import WebDAVStatusCodes
 
 

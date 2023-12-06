@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from nextcloud.base import WithRequester
+from ..base import WithRequester
 
 
 class User(WithRequester):

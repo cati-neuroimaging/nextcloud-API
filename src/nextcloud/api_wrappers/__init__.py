@@ -10,6 +10,7 @@ from .share import Share
 from .user import User
 from .user_ldap import UserLDAP
 from .webdav import WebDAV
+from .forms import Forms
 
 OCS_API_CLASSES = [
     Activity,
@@ -22,6 +23,7 @@ OCS_API_CLASSES = [
     Share,
     User,
     UserLDAP,
+    Forms,
 ]
 
 WEBDAV_CLASS = WebDAV

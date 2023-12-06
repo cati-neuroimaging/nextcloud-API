@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from nextcloud.base import WithRequester
+from ..base import WithRequester
 
 
 class UserLDAP(WithRequester):
